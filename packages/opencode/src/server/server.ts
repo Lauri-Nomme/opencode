@@ -34,7 +34,15 @@ export namespace Server {
     return false
   }
 
-  export const Default = lazy(() => ControlPlaneRoutes())
+  export const Default = lazy(() => create())
+
+  export const create = (opts?: { cors?: string[] }) => {
+    const app = ControlPlaneRoutes(opts)
+    return {
+      app,
+      fetch: app.fetch,
+    }
+  }
 
   export const ControlPlaneRoutes = (opts?: { cors?: string[] }): Hono => {
     const app = new Hono()
@@ -238,7 +246,7 @@ export namespace Server {
   }
 
   export function createApp(opts: { cors?: string[] }) {
-    return ControlPlaneRoutes(opts)
+    return create(opts).app
   }
 
   export async function openapi() {
@@ -272,11 +280,11 @@ export namespace Server {
     cors?: string[]
   }) {
     url = new URL(`http://${opts.hostname}:${opts.port}`)
-    const app = ControlPlaneRoutes({ cors: opts.cors })
+    const built = create({ cors: opts.cors })
     const args = {
       hostname: opts.hostname,
       idleTimeout: 0,
-      fetch: app.fetch,
+      fetch: built.fetch,
       websocket: websocket,
     } as const
     const tryServe = (port: number) => {
