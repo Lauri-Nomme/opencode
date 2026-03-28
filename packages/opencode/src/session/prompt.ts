@@ -462,7 +462,6 @@ export namespace SessionPrompt {
         const fiber = yield* Effect.promise((signal) => shellImpl(input, signal)).pipe(
           Effect.ensuring(
             Effect.gen(function* () {
-              const s = yield* InstanceState.get(cache)
               s.shells.delete(input.sessionID)
               // If callers queued a loop while the shell was running, start it
               const pending = s.loops.get(input.sessionID)

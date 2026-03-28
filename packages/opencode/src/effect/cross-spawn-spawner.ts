@@ -336,7 +336,7 @@ export const make = Effect.gen(function* () {
       if (Predicate.isUndefined(opts?.forceKillAfter)) return f(command, proc, signal)
       return Effect.timeoutOrElse(f(command, proc, signal), {
         duration: opts.forceKillAfter,
-        orElse: () => f(command, proc, "SIGKILL"),
+        onTimeout: () => f(command, proc, "SIGKILL"),
       })
     }
 
