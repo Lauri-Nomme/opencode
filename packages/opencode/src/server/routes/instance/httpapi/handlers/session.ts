@@ -184,7 +184,7 @@ export const sessionHandlers = HttpApiBuilder.group(InstanceHttpApi, "session", 
       params: { sessionID: SessionID }
       payload: typeof UpdatePayload.Type
     }) {
-      const current = yield* requireSession(ctx.params.sessionID)
+      yield* requireSession(ctx.params.sessionID)
       if (ctx.payload.title !== undefined) {
         yield* session.setTitle({ sessionID: ctx.params.sessionID, title: ctx.payload.title })
       }
@@ -194,7 +194,7 @@ export const sessionHandlers = HttpApiBuilder.group(InstanceHttpApi, "session", 
       if (ctx.payload.permission !== undefined) {
         yield* session.setPermission({
           sessionID: ctx.params.sessionID,
-          permission: Permission.merge(current.permission ?? [], ctx.payload.permission),
+          permission: [...ctx.payload.permission],
         })
       }
       if (ctx.payload.time?.archived !== undefined) {
